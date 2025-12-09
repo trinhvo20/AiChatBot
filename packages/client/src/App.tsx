@@ -1,7 +1,6 @@
-import { use, useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react'
 import './App.css'
+import { Button } from './components/ui/button';
 
 function App() {
   const [message, setMessage] = useState('');
@@ -12,7 +11,13 @@ function App() {
       .then(data => setMessage(data.message));
   }, []);
 
-  return <p className='font-bold'>{message}</p>
+  return (
+    <>
+      <p className='font-bold'>{message}</p>
+      <Button>Click me</Button>
+    </>
+
+  )
 }
 
 export default App
