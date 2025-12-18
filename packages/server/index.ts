@@ -26,16 +26,23 @@ app.get('/api/hello', (req: Request, res: Response) => {
     res.json({message: "Hello"})
 });
 
+// build memory for this chatbox
+// converstionId -> lastResponseId in that conversation
+const conversations = new Map<string, string>();
+
 app.post('/api/chat', async (req: Request, res: Response) => {
     try {
-        const {prompt} = req.body; // grab the user's chat
+        const {prompt, conversationId} = req.body; // grab the user's chat
         // and send to OpenAI
         const response = await client.responses.create({
             model: 'gpt-4o-mini',
             input: prompt,
             temperature: 0.2, // decide how logic/creative the answer is (0.2=logic, 1.0=creative)
-            max_output_tokens: 100 // tokens
+            max_output_tokens: 100, // tokens
+            previous_response_id: conversations.get(conversationId)
         })
+        // update the chatbox's memory
+        conversations.set(conversationId, response.id);
         // send the answer to user
         res.json({message: response.output_text})
     } catch (err) {
