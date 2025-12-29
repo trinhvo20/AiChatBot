@@ -38,12 +38,13 @@ const chatSchema = z.object({
 })
 
 app.post('/api/chat', async (req: Request, res: Response) => {
+    // validate the user's chat
+    const parsedResult = chatSchema.safeParse(req.body);
+    if (!parsedResult.success) {
+        return res.status(400).json(parsedResult.error.format());
+    }
+    
     try {
-        // validate the user's chat
-        const parsedResult = chatSchema.safeParse(req.body);
-        if (!parsedResult.success) {
-            return res.status(400).json(parsedResult.error.format());
-        }
         // grab the user's chat
         const {prompt, conversationId} = req.body; 
         
