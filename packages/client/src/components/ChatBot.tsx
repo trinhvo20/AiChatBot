@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import { Button } from './ui/button';
@@ -20,10 +20,12 @@ type Message = {
 
 const ChatBot = () => {
   const conversationId = useRef(crypto.randomUUID());
+  const formRef = useRef<HTMLFormElement | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isBotTyping, setIsBotTyping] = useState(false);
   const { register, handleSubmit, reset, formState } = useForm<FormData>();
 
+  // Hanlde Click submit form
   const onSubmit = async (formData: FormData) => {
     // formData.prompt = user's message
     setMessages((prev) => [
@@ -45,12 +47,18 @@ const ChatBot = () => {
     setIsBotTyping(false);
   };
 
+  // Handle Enter submit form
   const onKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(onSubmit)();
     }
   };
+
+  // Handle auto scroll to form (latest message)
+  useEffect(() => {
+    formRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   return (
     <div>
@@ -72,6 +80,7 @@ const ChatBot = () => {
         )}
       </div>
       <form
+        ref={formRef}
         onSubmit={handleSubmit(onSubmit)}
         onKeyDown={onKeyDown}
         className="flex flex-col gap-2 items-end border-2 rounded-3xl p-4"
