@@ -60,17 +60,28 @@ const ChatBot = () => {
     formRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Handle copy message properly (trim whitespace from html)
+  const onCopyMessage = (e: React.ClipboardEvent<HTMLParagraphElement>): void => {
+    const selection = window.getSelection()?.toString().trim();
+    if (selection) {
+      e.preventDefault();
+      e.clipboardData.setData('text/plain', selection);
+    }
+  };
+
   return (
     <div>
       <div className="flex flex-col gap-3 mb-10">
         {messages.map((message, index) => (
           <p
             key={index}
-            className={`px-3 py-1 rounded-xl ${message.role === 'user' ? 'bg-blue-400 text-white self-end' : 'bg-gray-100 text-black self-start'}`}
+            onCopy={onCopyMessage}
+            className={`px-3 py-1 rounded-xl ${message.role === 'user' ? 'bg-rose-400 text-white self-end' : 'bg-gray-100 text-black self-start'}`}
           >
             <ReactMarkdown>{message.content}</ReactMarkdown>
           </p>
         ))}
+        {/* show bot typing animation */}
         {isBotTyping && (
           <div className="flex gap-1 px-3 py-3 rounded-xl bg-gray-100 text-black self-start">
             <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse"></div>
