@@ -1,15 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { Button } from '../ui/button';
-import { FaArrowUp } from 'react-icons/fa';
-import { useForm } from 'react-hook-form';
 import TypingIndicator from './TypingIndicator';
 import type { Message } from './ChatMessages';
 import ChatMessages from './ChatMessages';
-
-type FormData = {
-  prompt: string;
-};
+import ChatInput, { type ChatFormData } from './ChatInput';
 
 type ChatResponse = {
   message: string;
@@ -20,24 +14,19 @@ const ChatBot = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isBotTyping, setIsBotTyping] = useState(false);
   const [error, setError] = useState('');
-  const { register, handleSubmit, reset, formState } = useForm<FormData>();
 
   // Hanlde Click submit form
-  const onSubmit = async (formData: FormData) => {
+  const onSubmit = async ({ prompt }: ChatFormData) => {
     try {
-      // formData.prompt = user's message
-      setMessages((prev) => [
-        ...prev,
-        { content: formData.prompt, role: 'user' },
-      ]);
+      // prompt = user's message
+      setMessages((prev) => [...prev, { content: prompt, role: 'user' }]);
 
       setIsBotTyping(true);
       setError('');
-      reset({ prompt: '' }); // clear the chatbox
 
       // send user's chat to backend
       const { data } = await axios.post<ChatResponse>('/api/chat', {
-        prompt: formData.prompt,
+        prompt: prompt,
         conversationId: conversationId.current,
       });
       console.log(data);
@@ -51,14 +40,6 @@ const ChatBot = () => {
     }
   };
 
-  // Handle Enter submit form
-  const onKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit(onSubmit)();
-    }
-  };
-
   return (
     <div className="flex flex-col h-full">
       {/* Old Messages */}
@@ -69,25 +50,7 @@ const ChatBot = () => {
       </div>
 
       {/* Chatbox */}
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        onKeyDown={onKeyDown}
-        className="flex flex-col gap-2 items-end border-2 rounded-3xl p-4"
-      >
-        <textarea
-          {...register('prompt', {
-            required: true,
-            validate: (data) => data.trim().length > 0,
-          })}
-          autoFocus // set cursor in the chatbox when page first load
-          className="w-full border-0 focus:outline-0 resize-none"
-          placeholder="Ask anything"
-          maxLength={1000}
-        />
-        <Button disabled={!formState.isValid} className="rounded-full w-9 h-9">
-          <FaArrowUp />
-        </Button>
-      </form>
+      <ChatInput onSubmit={onSubmit} />
     </div>
   );
 };
