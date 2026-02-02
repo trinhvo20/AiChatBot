@@ -1,4 +1,8 @@
-# moshaipoweredapp
+# Ai Chatbot
+
+Create an AI chatbot that serves as customer support for a Theme Park, responding exclusively to questions based on the Theme Park data.
+
+The system is powered by the **OpenAI API**.
 
 This project was created using `bun init` in bun v1.3.4. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
 
