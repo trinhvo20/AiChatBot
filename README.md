@@ -32,11 +32,11 @@ Backend is create using `bun init` inside **package\server** folder -- it is an 
 
 It uses **express** as server.
 
-## SQL
+# Prisma
 
-```sql
-CREATE LOGIN prisma_user WITH PASSWORD = 'StrongPassword!23';
-USE AiReviewSummary;
-CREATE USER prisma_user FOR LOGIN prisma_user;
-EXEC sp_addrolemember 'db_owner', 'prisma_user'
+Use [Prisma](https://www.prisma.io/) as our Postgres serverless database and as a tool to migrate database ( migrate = connect code to database).
+
+In  \packages\server path, run:
+```
+bunx prisma migrate dev
 ```
