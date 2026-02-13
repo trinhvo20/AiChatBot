@@ -31,3 +31,12 @@ It uses [TailwindCSS](https://tailwindcss.com/) and [Shadcn](https://ui.shadcn.c
 Backend is create using `bun init` inside **package\server** folder -- it is an empty typescript project.
 
 It uses **express** as server.
+
+## SQL
+
+```sql
+CREATE LOGIN prisma_user WITH PASSWORD = 'StrongPassword!23';
+USE AiReviewSummary;
+CREATE USER prisma_user FOR LOGIN prisma_user;
+EXEC sp_addrolemember 'db_owner', 'prisma_user'
+```
