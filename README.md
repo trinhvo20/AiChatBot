@@ -36,7 +36,8 @@ It uses **express** as server.
 
 Use [Prisma](https://www.prisma.io/) as our Postgres serverless database and as a tool to migrate database ( migrate = connect code to database).
 
-In  \packages\server path, run:
+In **\packages\server** path, run:
+
 ```
 bunx prisma migrate dev
 ```
