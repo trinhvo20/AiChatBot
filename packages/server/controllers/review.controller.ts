@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { reviewService } from '../services/review.service';
 
 export const reviewController = {
+    // Get all reviews of a product from DB
     async getReviews(req: Request, res: Response) {
         const productId = Number(req.params.id);
         if (isNaN(productId)) {
@@ -11,7 +12,7 @@ export const reviewController = {
         res.json(reviews);
     },
     
-
+    // Get AI summary of all reviews of a product
     async summarizeReviews(req: Request, res: Response) {
         const productId = Number(req.params.id);
         if (isNaN(productId)) {
