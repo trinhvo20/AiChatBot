@@ -25,6 +25,11 @@ export const reviewService = {
             max_tokens: 500, 
         })
         
-        return response.output_text; // the summary
+        const summary = response.output_text;
+
+        // Store summary to DB
+        await reviewRepository.storeSummary(productId, summary);
+        
+        return summary;
     },
 }
