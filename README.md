@@ -26,15 +26,19 @@ Frontend is created with [Vite](https://vite.dev/) inside **package\client** fol
 
 It uses [TailwindCSS](https://tailwindcss.com/) and [Shadcn](https://ui.shadcn.com/) as styling tools.
 
+It runs on `http://localhost:5173`
+
 ## Backend
 
 Backend is create using `bun init` inside **package\server** folder -- it is an empty typescript project.
 
 It uses **express** as server.
 
+It runs on `http://localhost:3000`
+
 # Prisma
 
-Use [Prisma](https://www.prisma.io/) as our Postgres serverless database and as a tool to migrate database ( migrate = connect code to database).
+Use [Prisma v7](https://www.prisma.io/) as our Postgres serverless database and as a tool to migrate database ( migrate = connect code to database).
 
 In **\packages\server** path, run:
 
