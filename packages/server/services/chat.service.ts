@@ -1,13 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import OpenAI from "openai";
 import { conversationRepository } from "../repositories/conversation.repository";
 import template from '../prompts/chatbot.txt';
-
-// Get OpenAI through API key
-const client = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
-});
+import { llmClient } from '../llm/client';
 
 // Get the instruction prompt for that chatbot from chatbot.txt
 const parkInfo = fs.readFileSync(path.join(__dirname, '..', 'prompts', 'WonderWorld.md'), 'utf-8')
@@ -22,13 +17,13 @@ type ChatResponse = {
 // Export public interface
 export const chatService = {
     async sendMessage(prompt: string, conversationId: string): Promise<ChatResponse> {
-        // and send to OpenAI
-        const response = await client.responses.create({
+        // Send the user's message to OpenAI
+        const response = await llmClient.generateText({
             model: 'gpt-4o-mini',
             instructions,
-            input: prompt,
+            prompt,
             temperature: 0.2, // decide how logic/creative the answer is (0.2=logic, 1.0=creative)
-            max_output_tokens: 200, // tokens
+            max_tokens: 200, // tokens
             previous_response_id: conversationRepository.getLastResponseId(conversationId)
         })
         
