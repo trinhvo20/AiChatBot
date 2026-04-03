@@ -13,7 +13,6 @@ export const reviewRepository = {
             orderBy: { createdAt: 'desc' },
             take: limit
         });
-
         return reviews;
     },
 
@@ -34,5 +33,12 @@ export const reviewRepository = {
             update: data,
             create: data,
         })
-    }
+    },
+
+    // Get summary of a product from DB
+    getSummary(productId: number) {
+        return prisma.summary.findUnique({ 
+            where: { productId } 
+        });
+    },
 }

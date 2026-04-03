@@ -11,13 +11,18 @@ export const reviewService = {
 
     // Get AI summary of all reviews of a product
     async summarizeReviews(productId: number): Promise<string> {
+        // Check if summary already exists in DB before generating a new one using AI
+        const existingSummary = await reviewRepository.getSummary(productId);
+        if (existingSummary && existingSummary.expiresAt > new Date()) {
+            return existingSummary.content;
+        }
+        
         // Get last 10 reviews from DB
         const reviews = await reviewRepository.getReviews(productId, 10);
         const joinedReviews = reviews.map(review => review.content).join('\n\n');
-
-        // Send last 10 reviews to AI to summary
         const prompt = template.replace('{{reviews}}', joinedReviews);
         
+        // Send last 10 reviews to AI to summary
         const response = await llmClient.generateText({
             model: 'gpt-4.1',
             prompt,
