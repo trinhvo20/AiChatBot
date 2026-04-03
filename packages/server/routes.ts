@@ -21,6 +21,7 @@ router.post('/api/chat', chatController.sendMessage)
 
 // Part 2 - AI Review Summarizer 
 router.get('/api/products/:id/reviews', reviewController.getReviews);
+router.post('/api/products/:id/reviews/summarize', reviewController.summarizeReviews);
 
 // Export 'default' because we only export 1 item in this file
 export default router;
