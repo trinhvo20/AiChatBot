@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Button } from '../ui/button';
 import { HiSparkles } from 'react-icons/hi2';
 import ReviewSkeleton from './ReviewSkeleton';
+import { set } from 'react-hook-form';
 
 type Props = {
     productId: number;
@@ -29,6 +30,7 @@ type GetSummaryResponse = {
 const ReviewList = ({productId }: Props) => {
     const [summary, setSummary] = useState('');
     const [isSummarizing, setIsSummarizing] = useState(false);
+    const [summaryError, setSummaryError] = useState('');
     
     const { data: reviewData, isLoading, error } = useQuery<GetReviewsResponse>({
         queryKey: ['reviews', productId],
@@ -43,10 +45,17 @@ const ReviewList = ({productId }: Props) => {
     }
     
     const handleSummrize = async () => {
-        setIsSummarizing(true);
-        const response = await axios.post<GetSummaryResponse>(`/api/products/${productId}/reviews/summarize`);
-        setSummary(response.data.summary);
-        setIsSummarizing(false);
+        try {
+            setIsSummarizing(true);
+            setSummaryError('');
+            const response = await axios.post<GetSummaryResponse>(`/api/products/${productId}/reviews/summarize`);
+            setSummary(response.data.summary);
+        } catch (error) {
+            setSummaryError("Could not summarize reviews");
+        }
+        finally {
+            setIsSummarizing(false);
+        }
     }
 
     if (!reviewData?.reviews.length) {
@@ -83,6 +92,7 @@ const ReviewList = ({productId }: Props) => {
                         }
                     </div>
                 )}
+                {summaryError && <p className='text-red-500'>{summaryError}</p>}
             </div>
 
             <div className='flex flex-col gap-5'>
