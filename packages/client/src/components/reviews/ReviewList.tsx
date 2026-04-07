@@ -5,6 +5,7 @@ import Skeleton from 'react-loading-skeleton'
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '../ui/button';
 import { HiSparkles } from 'react-icons/hi2';
+import ReviewSkeleton from './ReviewSkeleton';
 
 type Props = {
     productId: number;
@@ -20,17 +21,32 @@ type GetReviewsResponse = {
     reviews: Review[];
     summary: string | null;
 }
+type GetSummaryResponse = {
+    summary: string;
+}
+
 
 const ReviewList = ({productId }: Props) => {
-
+    const [summary, setSummary] = useState('');
+    const [isSummarizing, setIsSummarizing] = useState(false);
+    
     const { data: reviewData, isLoading, error } = useQuery<GetReviewsResponse>({
         queryKey: ['reviews', productId],
         queryFn: () => fetchReviews(),
     })
+    
+    const currentSummary = reviewData?.summary || summary;
 
     const fetchReviews = async () => {
         const response = await axios.get<GetReviewsResponse>(`/api/products/${productId}/reviews`);
         return response.data;
+    }
+    
+    const handleSummrize = async () => {
+        setIsSummarizing(true);
+        const response = await axios.post<GetSummaryResponse>(`/api/products/${productId}/reviews/summarize`);
+        setSummary(response.data.summary);
+        setIsSummarizing(false);
     }
 
     if (!reviewData?.reviews.length) {
@@ -41,11 +57,7 @@ const ReviewList = ({productId }: Props) => {
         return (
             <div className='flex flex-col gap-5'>
                 {[1,2,3].map((index) => (
-                    <div key={index}>
-                        <Skeleton width={150} />
-                        <Skeleton width={100} />
-                        <Skeleton count={2} />
-                    </div>
+                    <ReviewSkeleton key={index} />
                 ))}
             </div>
         )
@@ -58,13 +70,18 @@ const ReviewList = ({productId }: Props) => {
     return (
         <div>
             <div className='mb-5'>
-                {reviewData?.summary ? (
-                    <p>{reviewData.summary}</p>
+                {currentSummary ? (
+                    <p>{currentSummary}</p>
                 ): (
-                    <Button>
-                        <HiSparkles/>
-                        Summary
-                    </Button>
+                    <div>
+                        <Button onClick={handleSummrize} className='cursor-pointer' disabled={isSummarizing}>
+                            <HiSparkles/>
+                            Summary
+                        </Button>
+                        {isSummarizing && 
+                            <div className='py-3'><ReviewSkeleton /></div>
+                        }
+                    </div>
                 )}
             </div>
 
