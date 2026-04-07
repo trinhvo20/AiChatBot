@@ -1,0 +1,45 @@
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import StarRating from './StarRating';
+
+type Props = {
+    productId: number;
+}
+type Review = {
+    id: number;
+    author: string;
+    content: string;
+    rating: number;
+    createdAt: string;
+}
+type GetReviewsResponse = {
+    reviews: Review[];
+    summary: string | null;
+}
+
+const ReviewList = ({productId }: Props) => {
+    const [reviewData, setReviewData] = useState<GetReviewsResponse>();
+
+    const fetchReviews = async () => {
+        const response = await axios.get<GetReviewsResponse>(`/api/products/${productId}/reviews`);
+        setReviewData(response.data);
+    }
+
+    useEffect(() => {
+        fetchReviews();
+    }, [])
+
+    return (
+        <div className='flex flex-col gap-5'>
+            {reviewData?.reviews.map((review) => (
+                <div key={review.id}>
+                    <div className='font-semibold'>{review.author}</div>
+                    <div><StarRating rating={review.rating} /></div>
+                    <p className='py-2'>{review.content}</p>
+                </div>
+            ))}
+        </div>
+    )
+}
+
+export default ReviewList
