@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import StarRating from './StarRating';
 import Skeleton from 'react-loading-skeleton'
 import { useQuery } from '@tanstack/react-query';
+import { Button } from '../ui/button';
+import { HiSparkles } from 'react-icons/hi2';
 
 type Props = {
     productId: number;
@@ -31,6 +33,10 @@ const ReviewList = ({productId }: Props) => {
         return response.data;
     }
 
+    if (!reviewData?.reviews.length) {
+        return null;
+    }
+
     if (isLoading) {
         return (
             <div className='flex flex-col gap-5'>
@@ -50,14 +56,27 @@ const ReviewList = ({productId }: Props) => {
     }
 
     return (
-        <div className='flex flex-col gap-5'>
-            {reviewData?.reviews.map((review) => (
-                <div key={review.id}>
-                    <div className='font-semibold'>{review.author}</div>
-                    <div><StarRating rating={review.rating} /></div>
-                    <p className='py-2'>{review.content}</p>
-                </div>
-            ))}
+        <div>
+            <div className='mb-5'>
+                {reviewData?.summary ? (
+                    <p>{reviewData.summary}</p>
+                ): (
+                    <Button>
+                        <HiSparkles/>
+                        Summary
+                    </Button>
+                )}
+            </div>
+
+            <div className='flex flex-col gap-5'>
+                {reviewData?.reviews.map((review) => (
+                    <div key={review.id}>
+                        <div className='font-semibold'>{review.author}</div>
+                        <div><StarRating rating={review.rating} /></div>
+                        <p className='py-2'>{review.content}</p>
+                    </div>
+                ))}
+            </div>
         </div>
     )
 }
