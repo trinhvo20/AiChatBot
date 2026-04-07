@@ -17,7 +17,7 @@ export const reviewRepository = {
     },
 
     // Store the review summary to the DB
-    async storeSummary(productId: number, summary: string) {
+    storeSummary(productId: number, summary: string) {
         const now = new Date();
         const expiresAt = dayjs(now).add(7, 'days').toDate();
 
