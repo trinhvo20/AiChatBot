@@ -16,8 +16,13 @@ export const reviewController = {
             return res.status(404).json({error: "Product not found"});
         }
 
-        const reviews = await reviewService.getReviews(productId);
-        res.json(reviews);
+        const reviews = await reviewRepository.getReviews(productId);
+        const summary = await reviewRepository.getSummary(productId);
+
+        res.json({
+            reviews,
+            summary
+        });
     },
     
     // Get AI summary of all reviews of a product
